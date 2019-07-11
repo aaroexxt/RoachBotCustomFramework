@@ -197,7 +197,6 @@ void Roach_Init(void)
     //    while(1);
     AD_AddPins(LIGHT_SENSOR);
 
-    //enable interrupts
 }
 
 /**
