@@ -43,8 +43,7 @@ int checkForTimerEvents()
 int checkForBumperEvents(void)
 {
     static char previous_bumper_state[4]={0,0,0,0}; 
-    int bumper_reading = Roach_ReadBumpers();
-    char current_bumper_state[4] = {bumper_reading&0b1000>>3, bumper_reading&0b0100>>2, bumper_reading&0b0010>>1, bumper_reading&0b0001};
+    char current_bumper_state[4] = {Roach_ReadFrontLeftBumper(), Roach_ReadFrontRightBumper(), Roach_ReadRearLeftBumper(), Roach_ReadRearRightBumper()};
     int i = 0;
     for (i=0; i<3; i++){
         if (previous_bumper_state[i] && 
