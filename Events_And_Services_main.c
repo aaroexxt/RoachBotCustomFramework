@@ -19,24 +19,28 @@
 
 
 
-char timer_Expired_EventFlag[7] = {0, 0, 0, 0, 0, 0, 0};
+char timer_Expired_EventFlag[8] = {0, 0, 0, 0, 0, 0, 0};
 char bumperPressed_EventFlag[4] = {0, 0, 0, 0};
 char bumperReleased_EventFlag[4] = {0, 0, 0, 0};
 
 
-int checkForTimerEvent(int timer)
+int checkForTimerEvents()
 {
-    static char previous_timer_state = TIMER_NOT_ACTIVE;
-    char current_timer_state = TIMERS_IsTimerActive(timer);
-    
-    if (previous_timer_state == TIMER_ACTIVE && 
-            current_timer_state == TIMER_NOT_ACTIVE) {
+    static char previous_timer_state[8] = {TIMER_NOT_ACTIVE, TIMER_NOT_ACTIVE, TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE};
+    char current_timer_state[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    int i = 0;
+    for (i = 0; i<7; i++) {
+        current_timer_state[i] = TIMERS_IsTimerActive(i);
+
+        if (previous_timer_state[i] == TIMER_ACTIVE && 
+            current_timer_state[i] == TIMER_NOT_ACTIVE) {
         //then an event occurred!
-            timer_Expired_EventFlag[timer] = 1;
+            timer_Expired_EventFlag[i] = 1;
+        }
+        previous_timer_state[i] = current_timer_state[i];
     }
-    previous_timer_state = current_timer_state;
 }
-int checkForBumperEvent(void)
+int checkForBumperEvents(void)
 {
     static char previous_bumper_state[4]={0,0,0,0}; 
     int bumper_reading = Roach_ReadBumpers();
@@ -53,12 +57,8 @@ int checkForBumperEvent(void)
         //then an event occurred!
             bumperPressed_EventFlag[i] = 1;
         }
+        previous_bumper_state[i] = current_bumper_state[i];
     }
-    for (i=0; i<3; i++){
-       previous_bumper_state[i] = current_bumper_state[i]; 
-    }
-    
-    
 }
 
 void clearTimerEvents() {
@@ -79,41 +79,27 @@ void clearBumperEvents() {
 void ToggleLED_Service0()
 {
     static char LED_triggered = 1;
-    if (LED_triggered == 1){
-       Roach_LEDSSet((Roach_LEDSGet()&0b111111110000) + 0b1111); 
-       LED_triggered = 0;
-    }
-    else {
-        Roach_LEDSSet(Roach_LEDSGet()&0b111111110000);
-        LED_triggered = 1;
-    }
-    TIMERS_InitTimer(0, 2000);
+    Roach_LEDSSet((Roach_LEDSGet()&0b111111110000) + ((LED_triggered)?0b1111:0b0)); 
+    LED_triggered = !LED_triggered;
+
+    TIMERS_InitTimer(0, 2000); //reinit timer
 }
 void ToggleLED_Service1()
 {
     static char LED_triggered = 1;
-    if (LED_triggered == 1){
-       Roach_LEDSSet((Roach_LEDSGet()&0b111100001111) + 0b000011110000); 
-       LED_triggered = 0;
-    }
-    else {
-        Roach_LEDSSet(Roach_LEDSGet()&0b111100001111);
-        LED_triggered = 1;
-    }
-    TIMERS_InitTimer(1, 3000);
+    Roach_LEDSSet((Roach_LEDSGet()&0b111100001111) + ((LED_triggered)?0b000011110000:0b0)); 
+    LED_triggered = !LED_triggered;
+
+    TIMERS_InitTimer(1, 3000); //reinit timer
 }
 void ToggleLED_Service2()
 {
     static char LED_triggered = 1;
-    if (LED_triggered == 1){
-       Roach_LEDSSet((Roach_LEDSGet()&0b000011111111) + 0b111100000000); 
-       LED_triggered = 0;
-    }
-    else {
-        Roach_LEDSSet(Roach_LEDSGet()&0b000011111111);
-        LED_triggered = 1;
-    }
-    TIMERS_InitTimer(2, 5000);
+
+    Roach_LEDSSet((Roach_LEDSGet()&0b000011111111) + ((LED_triggered)?0b111100000000:0b0)); 
+    LED_triggered = !LED_triggered;
+    
+    TIMERS_InitTimer(2, 5000); //reinit timer
 }
 
 int main(void)
@@ -140,10 +126,8 @@ int main(void)
     
     while (1) {
         //continuous services (event checkers):
-        checkForTimerEvent(0);
-        checkForTimerEvent(1);
-        checkForTimerEvent(2);
-        checkForBumperEvent();
+        checkForTimerEvents();
+        checkForBumperEvents();
         
         if (bumperPressed_EventFlag[0]){
             printf("FL bumper pressed");
