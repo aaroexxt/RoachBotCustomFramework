@@ -19,15 +19,15 @@
 
 
 
-char timer_Expired_EventFlag[8] = {0, 0, 0, 0, 0, 0, 0};
+char timer_Expired_EventFlag[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 char bumperPressed_EventFlag[4] = {0, 0, 0, 0};
 char bumperReleased_EventFlag[4] = {0, 0, 0, 0};
 
 
-int checkForTimerEvents()
+int checkForTimerEvents(void)
 {
-    static char previous_timer_state[8] = {TIMER_NOT_ACTIVE, TIMER_NOT_ACTIVE, TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE};
-    char current_timer_state[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    static char previous_timer_state[16] = {TIMER_NOT_ACTIVE, TIMER_NOT_ACTIVE, TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE};
+    char current_timer_state[8] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     int i = 0;
     for (i = 0; i<7; i++) {
         current_timer_state[i] = TIMERS_IsTimerActive(i);
