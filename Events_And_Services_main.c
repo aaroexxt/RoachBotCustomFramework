@@ -18,12 +18,6 @@
 #include "timers.h"
 
 
-//EventFlags - for various roach events
-char timerExpired_EventFlag[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-char bumperPressed_EventFlag[4] = {0, 0, 0, 0};
-char bumperReleased_EventFlag[4] = {0, 0, 0, 0};
-
-
 //Constants to make maze navigation arrays easier to write
 #define FORWARD 0
 #define BACKWARD 1
@@ -50,59 +44,9 @@ int maze1[11][3] = {
 };
 int mazeCommandsMax = 10; //list of actual maze elements (MINUS STOP COMMAND)
 
-//Checks for timer events that have occured and sets flags
-int checkForTimerEvents(void) {
-    //previous_timer_state represents you guessed it previous timer state
-    static char previous_timer_state[16] = {TIMER_NOT_ACTIVE, TIMER_NOT_ACTIVE, TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE};
-    //currnent_timer_state represents current timer states
-    char current_timer_state[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    
-    int i = 0;
-    for (i = 0; i<16; i++) { //loop through 16 builtin timers to check if thay are active
-        current_timer_state[i] = TIMERS_IsTimerActive(i);
 
-        if (previous_timer_state[i] == TIMER_ACTIVE && 
-            current_timer_state[i] == TIMER_NOT_ACTIVE) { //is the previous state active and current not active (i.e. timer expired?)
-        //then an event occurred!
-            timerExpired_EventFlag[i] = 1; //set flag
-        }
-        previous_timer_state[i] = current_timer_state[i]; //set previous state
-    }
-}
 
-//Checks for bumper events that have occurred and sets flags
-BumperEvent checkForBumperEvents(void)
-{
-    static char previous_bumper_state[4]= {0, 0, 0, 0}; //Represents previous state (FL, FR, BL, BR)
-    char current_bumper_state[4] = { //current bumper state is stored here. Calls functions from the roach
-        Roach_ReadFrontLeftBumper(),
-        Roach_ReadFrontRightBumper(),
-        Roach_ReadRearLeftBumper(),
-        Roach_ReadRearRightBumper()
-    };
-    static int bumperCountdown[4] = {0, 0, 0, 0}; //Array of counters to count a minimum amount of loops between bumper events
-    
-    int i = 0;
-    for (i=0; i<4; i++) { //Loop through potential bumper states and check
-        if (bumperCountdown[i] <= 0) { //Make sure bumper countdown element is zero. This ensures that a minimum amount of loop cycles occur before the bumper event can be changed.
-            if (previous_bumper_state[i] && !current_bumper_state[i]) { //previous state HIGH, current state LOW (FALLING)
-            //then an event occurred!
-                bumperReleased_EventFlag[i] = 1;
-                bumperCountdown[i] = 200; //set  debounce variable
-            } else if (!previous_bumper_state[i] && current_bumper_state[i]) { //previous state LOW, current state HIGH (RISING)
-            //then an event occurred!
-                bumperPressed_EventFlag[i] = 1;
-                bumperCountdown[i] = 200; //set debounce variable
-            }
-            previous_bumper_state[i] = current_bumper_state[i]; //set prev to current
-        } else {
-            bumperCountdown[i]--; //if bumper countdown is not zero yet (i.e. minimum cycles have not elapsed), then decrement the countdown
-        }
-    }
-    struct BumperEvent *currentBumperEvent;
-    currentBumperEvent = malloc(sizeof *BumperEvent);
-    currentBumperEvent->FL = 
-}
+
 
 //Clear timer events by setting all of the timer event flags to zero
 void clearTimerEvents() {

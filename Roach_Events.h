@@ -12,6 +12,7 @@
 
 typedef enum {
     NO_EVENT,
+    //Bumper events
     FRONT_RIGHT_BUMP_PRESSED,
     FRONT_LEFT_BUMP_PRESSED,
     REAR_RIGHT_BUMP_PRESSED,
@@ -22,7 +23,23 @@ typedef enum {
     REAR_LEFT_BUMP_RELEASED,
     ENTERED_DARK,
     ENTERED_LIGHT,
-    NAV_TIMER_EXPIRED
+    //Timer Events
+    TIMER0_EVENT,
+    TIMER1_EVENT,
+    TIMER2_EVENT,
+    TIMER3_EVENT,
+    TIMER4_EVENT,
+    TIMER5_EVENT,
+    TIMER6_EVENT,
+    TIMER7_EVENT,
+    TIMER8_EVENT,
+    TIMER9_EVENT,
+    TIMER10_EVENT,
+    TIMER11_EVENT,
+    TIMER12_EVENT,
+    TIMER13_EVENT,
+    TIMER14_EVENT,
+    TIMER15_EVENT
 } Event;
 
 Event CheckForAllEvents(void);

@@ -8,6 +8,10 @@
 
 #define LIGHT_THRESHOLD 800 //The threshold between light and darkness - you may need to change this!
 
+enum {
+    DARK, LIGHT
+};
+
 Event CheckForAllEvents(void)
 {
     Event returnEvent = NO_EVENT;
@@ -24,58 +28,138 @@ Event CheckForAllEvents(void)
     return NO_EVENT;
 }
 
-Event CheckForTimerEvents(void)
-{
-    static char previous_timer_state = TIMER_NOT_ACTIVE;
-    char current_timer_state = TIMERS_IsTimerActive(0);
+//Checks for timer events that have occured and sets flags
+Event checkForTimerEvents(void) {
+    //previous_timer_state represents you guessed it previous timer state
+    static char previous_timer_state[16] = {TIMER_NOT_ACTIVE, TIMER_NOT_ACTIVE, TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE};
+    //currnent_timer_state represents current timer states
+    char current_timer_state[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    
+    int i = 0;
+    for (i = 0; i<16; i++) { //loop through 16 builtin timers to check if thay are active
+        current_timer_state[i] = TIMERS_IsTimerActive(i);
+        if (current_timer_state[i]) {
+            eventExists = 1;
+        }
 
-    if (previous_timer_state == TIMER_ACTIVE &&
-            current_timer_state == TIMER_NOT_ACTIVE) {
+        if (previous_timer_state[i] == TIMER_ACTIVE && 
+            current_timer_state[i] == TIMER_NOT_ACTIVE) { //is the previous state active and current not active (i.e. timer expired?)
         //then an event occurred!
-        return NAV_TIMER_EXPIRED;
-        previous_timer_state = current_timer_state;
+            switch(timerNumber) {
+                case 0:
+                    return TIMER0_EXPIRED;
+                    break;
+                case 1:
+                    return TIMER1_EXPIRED;
+                    break;
+                case 2:
+                    return TIMER2_EXPIRED;
+                    break;
+                case 3:
+                    return TIMER3_EXPIRED;
+                    break;
+                case 1:
+                    return TIMER4_EXPIRED;
+                    break;
+                case 1:
+                    return TIMER5_EXPIRED;
+                    break;
+                case 1:
+                    return TIMER6_EXPIRED;
+                    break;
+                case 1:
+                    return TIMER7_EXPIRED;
+                    break;
+                case 1:
+                    return TIMER8_EXPIRED;
+                    break;
+                case 1:
+                    return TIMER9_EXPIRED;
+                    break;
+                case 1:
+                    return TIMER10_EXPIRED;
+                    break;
+                case 1:
+                    return TIMER11_EXPIRED;
+                    break;
+                case 1:
+                    return TIMER12_EXPIRED;
+                    break;
+                case 1:
+                    return TIMER13_EXPIRED;
+                    break;
+                case 1:
+                    return TIMER14_EXPIRED;
+                    break;
+                case 1:
+                    return TIMER15_EXPIRED;
+                    break;
+            }
+        }
+        previous_timer_state[i] = current_timer_state[i]; //set previous state
     }
 
-    //if we got this far, there was no event
-    return NO_EVENT;
+    return NO_EVENT; //if we're here, return no event
 }
 
-Event CheckForBumperEvents(void)
+//Checks for bumper events that have occurred and sets flags
+Event checkForBumperEvents(void)
 {
-    static char previous_fl_bumper_state = BUMPER_NOT_TRIPPED;
-    static char previous_fr_bumper_state = BUMPER_NOT_TRIPPED;
-
-    //a rough but effective way to handle debouncing:
-    if (TIMERS_IsTimerActive(DEBOUNCE_TIMER)) return NO_EVENT;
-
-    //now check for events:
-    char current_fl_bumper_state = Roach_ReadFrontLeftBumper();
-    if (current_fl_bumper_state != previous_fl_bumper_state) {
-        previous_fl_bumper_state = current_fl_bumper_state;
-        //start debounce period:
-        TIMERS_InitTimer(DEBOUNCE_TIMER, DEBOUNCE_PERIOD);
-        if (previous_fl_bumper_state != 0) {
-            return FRONT_LEFT_BUMP_PRESSED;
-        } else return FRONT_LEFT_BUMP_RELEASED;
+    static char previous_bumper_state[4]= {0, 0, 0, 0}; //Represents previous state (FL, FR, BL, BR)
+    char current_bumper_state[4] = { //current bumper state is stored here. Calls functions from the roach
+        Roach_ReadFrontLeftBumper(),
+        Roach_ReadFrontRightBumper(),
+        Roach_ReadRearLeftBumper(),
+        Roach_ReadRearRightBumper()
+    };
+    static int bumperCountdown[4] = {0, 0, 0, 0}; //Array of counters to count a minimum amount of loops between bumper events
+    
+    int i = 0;
+    for (i=0; i<4; i++) { //Loop through potential bumper states and check
+        if (bumperCountdown[i] <= 0) { //Make sure bumper countdown element is zero. This ensures that a minimum amount of loop cycles occur before the bumper event can be changed.
+            if (previous_bumper_state[i] && !current_bumper_state[i]) { //previous state HIGH, current state LOW (FALLING)
+            //then an event occurred!
+                switch(i) {
+                    case 0:
+                        return FRONT_LEFT_BUMPER_RELEASED;
+                        break;
+                    case 1:
+                        return FRONT_RIGHT_BUMPER_RELEASED;
+                        break;
+                    case 2:
+                        return REAR_LEFT_BUMPER_RELEASED;
+                        break;
+                    case 3:
+                        return REAR_RIGHT_BUMPER_RELEASED;
+                        break;
+                }
+                bumperCountdown[i] = 200; //set  debounce variable
+            } else if (!previous_bumper_state[i] && current_bumper_state[i]) { //previous state LOW, current state HIGH (RISING)
+            //then an event occurred!
+                switch(i) {
+                    case 0:
+                        return FRONT_LEFT_BUMPER_PRESSED;
+                        break;
+                    case 1:
+                        return FRONT_RIGHT_BUMPER_PRESSED;
+                        break;
+                    case 2:
+                        return REAR_LEFT_BUMPER_PRESSED;
+                        break;
+                    case 3:
+                        return REAR_RIGHT_BUMPER_PRESSED;
+                        break;
+                }
+                bumperCountdown[i] = 200; //set debounce variable
+            }
+            previous_bumper_state[i] = current_bumper_state[i]; //set prev to current
+        } else {
+            bumperCountdown[i]--; //if bumper countdown is not zero yet (i.e. minimum cycles have not elapsed), then decrement the countdown
+        }
     }
 
-    char current_fr_bumper_state = Roach_ReadFrontRightBumper();
-    if (current_fr_bumper_state != previous_fr_bumper_state) {
-        previous_fr_bumper_state = current_fr_bumper_state;
-        //start debounce period:
-        TIMERS_InitTimer(DEBOUNCE_TIMER, DEBOUNCE_PERIOD);
-        if (current_fr_bumper_state != 0) {
-            return FRONT_RIGHT_BUMP_PRESSED;
-        } else return FRONT_RIGHT_BUMP_RELEASED;
-    }
-
-    //if we got this far, there was no event
-    return NO_EVENT;
+    return NO_EVENT; //if we got here no event happened
 }
-
-enum {
-    DARK, LIGHT
-};
 
 Event CheckForLightEvents(void)
 {
