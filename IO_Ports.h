@@ -9,7 +9,7 @@
  * on the connector grounded.
  *
  * The individual ports pins can be addressed directly using the appropriate _TRIS and _LAT
- * #defines. Using the _TRIS to set direction (0 for output, 1 for input), and then manipulate
+ * #defines. Using the _TRIS to set direction (0 for output, 1 for ), and then manipulate
  * the pins direction with the _LAT to drive (1 for high, 0 for low) and the _BIT to read.
  * These can all be manipulated at the bit level. For Port level manipulation, there are
  * provided functions.

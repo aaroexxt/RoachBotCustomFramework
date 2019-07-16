@@ -23,6 +23,12 @@ char timerExpired_EventFlag[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 char bumperPressed_EventFlag[4] = {0, 0, 0, 0};
 char bumperReleased_EventFlag[4] = {0, 0, 0, 0};
 
+struct BumperEvent {
+    char FL;
+    char FR;
+    char BL;
+    char BR;
+};
 
 //Constants to make maze navigation arrays easier to write
 #define FORWARD 0
