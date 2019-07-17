@@ -87,7 +87,7 @@ void Run_RoachStateMachine(Event event)
         case Reverse:
             printf("Current state: Reversing\r\n");
             //If bumper gets pressed immediately break
-            if (event == BACK_LEFT_BUMPER_PRESSED || event == BACK_RIGHT_BUMPER_PRESSED) {
+            if (event == REAR_LEFT_BUMPER_PRESSED || event == REAR_RIGHT_BUMPER_PRESSED) {
                 current_state = Moving_Forward;
             }
             if (event == TIMER0_EXPIRED) { //Otherwise wait for timer and then change it
