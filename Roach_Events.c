@@ -6,7 +6,7 @@
 #define DEBOUNCE_TIMER 15 //select a timer to be the debounce timer
 #define DEBOUNCE_PERIOD 30 //in milliseconds, the duration of the debounce period
 
-#define LIGHT_THRESHOLD 800 //The threshold between light and darkness - you may need to change this!
+#define LIGHT_THRESHOLD 500 //The threshold between light and darkness - you may need to change this!
 
 enum {
     DARK, LIGHT
@@ -45,7 +45,7 @@ Event checkForTimerEvents(void) {
         if (previous_timer_state[i] == TIMER_ACTIVE && 
             current_timer_state[i] == TIMER_NOT_ACTIVE) { //is the previous state active and current not active (i.e. timer expired?)
         //then an event occurred!
-            switch(timerNumber) {
+            switch(i) {
                 case 0:
                     return TIMER0_EXPIRED;
                     break;
@@ -58,40 +58,40 @@ Event checkForTimerEvents(void) {
                 case 3:
                     return TIMER3_EXPIRED;
                     break;
-                case 1:
+                case 4:
                     return TIMER4_EXPIRED;
                     break;
-                case 1:
+                case 5:
                     return TIMER5_EXPIRED;
                     break;
-                case 1:
+                case 6:
                     return TIMER6_EXPIRED;
                     break;
-                case 1:
+                case 7:
                     return TIMER7_EXPIRED;
                     break;
-                case 1:
+                case 8:
                     return TIMER8_EXPIRED;
                     break;
-                case 1:
+                case 9:
                     return TIMER9_EXPIRED;
                     break;
-                case 1:
+                case 10:
                     return TIMER10_EXPIRED;
                     break;
-                case 1:
+                case 11:
                     return TIMER11_EXPIRED;
                     break;
-                case 1:
+                case 12:
                     return TIMER12_EXPIRED;
                     break;
-                case 1:
+                case 13:
                     return TIMER13_EXPIRED;
                     break;
-                case 1:
+                case 14:
                     return TIMER14_EXPIRED;
                     break;
-                case 1:
+                case 15:
                     return TIMER15_EXPIRED;
                     break;
             }
