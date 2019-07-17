@@ -50,7 +50,7 @@ Event CheckForLightEvents(void);
 
 Event CheckForTimerEvents(void);
 
-Event CheckForNavigatioEvents(void);
+Event CheckForNavigationEvents(void);
 
 #endif	/* ROACH_EVENTS_H */
 

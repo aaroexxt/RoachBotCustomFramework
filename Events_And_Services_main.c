@@ -84,9 +84,6 @@ int main(void)
     //Initialization code here:
     printf("Welcome to Events and Services lab, compiled on %s %s\r\n", __TIME__, __DATE__);
     // </editor-fold>
-    BOARD_Init();
-    Roach_Init();
-    TIMERS_Init();
 
     //Setup the timer(s)
     TIMERS_InitTimer(0, 1000);
