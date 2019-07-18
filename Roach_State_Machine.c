@@ -9,8 +9,9 @@
 enum {
     Moving_Forward,
     Reverse,
-    WaitS,
-    Hiding
+    WaitInitialTurn,
+    Hiding,
+    WaitAfterReverse
 };
 
 enum {
@@ -22,6 +23,7 @@ enum {
 
 int current_state;
 int nextDirection;
+int stallCount = 0;
 
 /* This function initializes the roach state machine.
  * At a minimum, this requires setting the first state.
@@ -46,6 +48,8 @@ void Run_RoachStateMachine(Event event)
     switch (current_state) {
         case Moving_Forward:
             printf("Current state:  Moving_Forward\r\n");
+            stallCount = 0; //reset stallCount
+
             if (event == ENTERED_DARK) {
                 current_state = Hiding;
                 //stop motors:
@@ -54,22 +58,22 @@ void Run_RoachStateMachine(Event event)
             }
             if (event == FRONT_RIGHT_BUMPER_PRESSED) {
                 //Reverse
-                current_state = Reverse;
+                current_state = WaitInitialTurn;
                 nextDirection = LEFT;
                 //Set motor power:
                 Roach_LeftMtrSpeed(-100);
-                Roach_RightMtrSpeed(-100);
+                Roach_RightMtrSpeed(100);
 
-                TIMERS_InitTimer(0, 750); //set timer for time
+                TIMERS_InitTimer(0, 250); //set timer for time
             }
             if (event == FRONT_LEFT_BUMPER_PRESSED) {
                 //Reverse
-                current_state = Reverse;
+                current_state = WaitInitialTurn;
                 nextDirection = RIGHT;
-                Roach_LeftMtrSpeed(-100);
+                Roach_LeftMtrSpeed(100);
                 Roach_RightMtrSpeed(-100);
 
-                TIMERS_InitTimer(0, 750); //set timer for time
+                TIMERS_InitTimer(0, 250); //set timer for time
             }
             break;
             
@@ -86,10 +90,7 @@ void Run_RoachStateMachine(Event event)
         case Reverse:
             printf("Current state: Reversing\r\n");
             //If bumper gets pressed immediately break
-            if (event == REAR_LEFT_BUMPER_PRESSED || event == REAR_RIGHT_BUMPER_PRESSED) {
-                current_state = Moving_Forward;
-            }
-            if (event == TIMER0_EXPIRED) { //Otherwise wait for timer and then change it
+            if (event == TIMER0_EXPIRED || event == REAR_LEFT_BUMPER_PRESSED || event == REAR_RIGHT_BUMPER_PRESSED) { //Otherwise wait for timer and then change it
                 if (nextDirection == LEFT) {
                     Roach_LeftMtrSpeed(-100);
                     Roach_RightMtrSpeed(100);
@@ -97,14 +98,40 @@ void Run_RoachStateMachine(Event event)
                     Roach_LeftMtrSpeed(100);
                     Roach_RightMtrSpeed(-100);
                 }
-                TIMERS_InitTimer(0, 500);
-                current_state = WaitS;
+                current_state = WaitAfterReverse;
+                TIMERS_InitTimer(0, 400);
             }
             break;
-        case WaitS:
-            printf("Current state: WaitS");
-            if (event == TIMER0_EXPIRED) {
+        case WaitInitialTurn:
+            printf("Current state: WaitInitialTurn");
+            if (event == TIMER0_EXPIRED) { //check if timer expired
                 current_state == Moving_Forward;
+            }
+            if (event == ENTERED_DARK) {
+                current_state = Hiding;
+                //stop motors:
+                Roach_LeftMtrSpeed(0);
+                Roach_RightMtrSpeed(0);
+            }
+            if (Roach_ReadFrontRightBumper() && Roach_ReadFrontLeftBumper()) {
+                stallCount++;
+                if (stallCount > 100000) {
+                    Roach_LeftMtrSpeed(-100);
+                    Roach_RightMtrSpeed(-100);
+                    TIMERS_InitTimer(0, 500);
+                    current_state = Reverse;
+                }
+            }
+            break;
+        case WaitAfterReverse:
+            if (event == TIMER0_EXPIRED) { //check if timer expired
+                current_state == Moving_Forward;
+            }
+            if (event == ENTERED_DARK) {
+                current_state = Hiding;
+                //stop motors:
+                Roach_LeftMtrSpeed(0);
+                Roach_RightMtrSpeed(0);
             }
             break;
     }
