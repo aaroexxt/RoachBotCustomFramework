@@ -48,7 +48,6 @@ void Run_RoachStateMachine(Event event)
     switch (current_state) {
         case Moving_Forward:
             printf("Current state:  Moving_Forward\r\n");
-            stallCount = 0; //reset stallCount
 
             if (event == ENTERED_DARK) {
                 current_state = Hiding;
@@ -106,6 +105,9 @@ void Run_RoachStateMachine(Event event)
             printf("Current state: WaitInitialTurn");
             if (event == TIMER0_EXPIRED) { //check if timer expired
                 current_state == Moving_Forward;
+                if (!(Roach_ReadFrontRightBumper() && Roach_ReadFrontLeftBumper())) {
+                    stallCount = 0; //if only one bumper is pressed reset otherwise keep it
+                }
             }
             if (event == ENTERED_DARK) {
                 current_state = Hiding;
