@@ -28,28 +28,28 @@ void PrintEvent(Event event)
     case NO_EVENT:
         printf("Event:  NO_EVENT\r\n");
         break;
-    case FRONT_RIGHT_BUMP_PRESSED:
+    case FRONT_RIGHT_BUMPER_PRESSED:
         printf("Event:  FRONT_RIGHT_BUMP_PRESSED\r\n");
         break;
-    case FRONT_LEFT_BUMP_PRESSED:
+    case FRONT_LEFT_BUMPER_PRESSED:
         printf("Event:  FRONT_LEFT_BUMP_PRESSED\r\n");
         break;
-    case REAR_RIGHT_BUMP_PRESSED:
+    case REAR_RIGHT_BUMPER_PRESSED:
         printf("Event:  REAR_RIGHT_BUMP_PRESSED\r\n");
         break;
-    case REAR_LEFT_BUMP_PRESSED:
+    case REAR_LEFT_BUMPER_PRESSED:
         printf("Event:  REAR_LEFT_BUMP_PRESSED\r\n");
         break;
-    case FRONT_RIGHT_BUMP_RELEASED:
+    case FRONT_RIGHT_BUMPER_RELEASED:
         printf("Event:  FRONT_RIGHT_BUMP_RELEASED\r\n");
         break;
-    case FRONT_LEFT_BUMP_RELEASED:
+    case FRONT_LEFT_BUMPER_RELEASED:
         printf("Event:  FRONT_LEFT_BUMP_RELEASED\r\n");
         break;
-    case REAR_RIGHT_BUMP_RELEASED:
+    case REAR_RIGHT_BUMPER_RELEASED:
         printf("Event:  REAR_RIGHT_BUMP_RELEASED\r\n");
         break;
-    case REAR_LEFT_BUMP_RELEASED:
+    case REAR_LEFT_BUMPER_RELEASED:
         printf("Event:  REAR_LEFT_BUMP_RELEASED\r\n");
         break;
     case ENTERED_DARK:
@@ -58,8 +58,8 @@ void PrintEvent(Event event)
     case ENTERED_LIGHT:
         printf("Event:  ENTERED_LIGHT\r\n");
         break;
-    case NAV_TIMER_EXPIRED:
-        printf("Event:  NAV_TIMER_EXPIRED\r\n");
+    case TIMER0_EXPIRED:
+        printf("Event:  TIMER0_EXPIRED\r\n");
         break;
 
     }

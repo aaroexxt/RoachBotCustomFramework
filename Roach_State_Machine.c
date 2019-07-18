@@ -8,8 +8,7 @@
 
 enum {
     Moving_Forward,
-    ReverseLeft,
-    ReverseRight,
+    Reverse,
     WaitS,
     Hiding
 };

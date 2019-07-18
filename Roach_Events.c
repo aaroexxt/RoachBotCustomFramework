@@ -29,7 +29,7 @@ Event CheckForAllEvents(void)
 }
 
 //Checks for timer events that have occured and sets flags
-Event checkForTimerEvents(void) {
+Event CheckForTimerEvents(void) {
     //previous_timer_state represents you guessed it previous timer state
     static char previous_timer_state[16] = {TIMER_NOT_ACTIVE, TIMER_NOT_ACTIVE, TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE,TIMER_NOT_ACTIVE};
     //currnent_timer_state represents current timer states
@@ -38,10 +38,7 @@ Event checkForTimerEvents(void) {
     int i = 0;
     for (i = 0; i<16; i++) { //loop through 16 builtin timers to check if thay are active
         current_timer_state[i] = TIMERS_IsTimerActive(i);
-        if (current_timer_state[i]) {
-            eventExists = 1;
-        }
-
+        
         if (previous_timer_state[i] == TIMER_ACTIVE && 
             current_timer_state[i] == TIMER_NOT_ACTIVE) { //is the previous state active and current not active (i.e. timer expired?)
         //then an event occurred!
@@ -103,7 +100,7 @@ Event checkForTimerEvents(void) {
 }
 
 //Checks for bumper events that have occurred and sets flags
-Event checkForBumperEvents(void)
+Event CheckForBumperEvents(void)
 {
     static char previous_bumper_state[4]= {0, 0, 0, 0}; //Represents previous state (FL, FR, BL, BR)
     char current_bumper_state[4] = { //current bumper state is stored here. Calls functions from the roach

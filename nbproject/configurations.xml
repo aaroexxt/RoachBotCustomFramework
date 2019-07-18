@@ -704,8 +704,6 @@
                   value=""/>
         <property key="warningmessagebreakoptions.warningmessages" value="holdstate"/>
       </Simulator>
-      <item path="State_Machine_main.c" ex="true" overriding="false">
-      </item>
     </conf>
   </confs>
 </configurationDescriptor>
